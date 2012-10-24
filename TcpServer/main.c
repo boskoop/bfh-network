@@ -18,26 +18,25 @@
 int main(int argc, char** argv) {
 
     struct sockaddr address;
-    int returnCode, addressLength = sizeof(address);
-    char hello[] = "Hello dear client, I am an echo server\n";
+    int returnCode, addressLength = sizeof (address);
+    char hello[] = "Thank you for registering\n";
     char buffer[BUFFER_SIZE];
-    
+
     SOCKET s, ss;
     WSAinit();
     ss = passiveTCP(PORT, 5);
+
+    s = accept(ss, &address, &addressLength);
+    send(s, hello, strlen(hello), 0);
     while (1) {
-        s = accept(ss, &address, &addressLength);
-        send(s, hello, strlen(hello), 0);
-        while (1) {
-            returnCode = recv(s, buffer, sizeof(buffer), 0);
-            if (returnCode <= 0) {
-                break;
-            }
-            send(s, buffer, returnCode, 0);
+        returnCode = recv(s, buffer, sizeof (buffer), 0);
+        if (returnCode <= 0 || buffer[0] == '\n') {
+            break;
         }
-        closesocket(s);
+        send(s, buffer, returnCode, 0);
     }
-    
+    closesocket(s);
+
     return (EXIT_SUCCESS);
 }
 
