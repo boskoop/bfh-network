@@ -35,6 +35,10 @@ void *shutdownHookThread(void *p) {
         }
         sendto(socket, &nokMessage, strlen(nokMessage), 0, (struct sockaddr *) &address, (socklen_t) addressLength);
     }
+    
+    closesocket(socket);
+    
+    runFlag = 0;
 }
 
 void *workerThread(void *tcpSocket) {
@@ -59,7 +63,7 @@ void *workerThread(void *tcpSocket) {
         send(socket, shutdown, strlen(shutdown), 0);
     }
 
-    close(socket);
+    closesocket(socket);
     
     return NULL;
 }
@@ -89,14 +93,6 @@ int main(int argc, char** argv) {
 
     pthread_join(worker, NULL);
 
-    //    send(s, hello, strlen(hello), 0);
-    //    while (1) {
-    //        returnCode = recv(s, buffer, sizeof (buffer), 0);
-    //        if (returnCode <= 0 || buffer[0] == '\n') {
-    //            break;
-    //        }
-    //        send(s, buffer, returnCode, 0);
-    //    }
     closesocket(ss);
 
     return (EXIT_SUCCESS);
